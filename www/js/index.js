@@ -35,6 +35,38 @@ var app = {
                 bluetoothStateSpan.innerHTML = state;
             }
         );
+
+        statusDiv.innerHTML = 'Attempting to connect to BLE device in 5 seconds';
+        setTimeout(app.connectToDevice, 5);
+    },
+
+    connectToDevice: function() {
+
+        var connected = function(peripheral) {
+            statusDiv.innerHTML = 'Connected to ' + peripheral.id;
+        }
+
+        var disconnected = function(peripheral) {
+            statusDiv.innerHTML = 'Disconnected from ' + peripheral.id;
+        }
+
+        var SERVICE_UUID = 'FFE0'; // NOTE: change this to match your device UUID
+
+        statusDiv.innerHTML = 'Scanning for ' + SERVICE_UUID;
+        ble.startScan([SERVICE_UUID], function(device) {
+            statusDiv.innerHTML = 'Found ' + device.id;
+            // this is a demo, stop scanning and connect to the first device
+            ble.stopScan(
+                function() {
+                    ble.connect(device.id, connected, disconnected);
+                },
+                function() {
+                    console.log('Failed to stop scan');
+                    statusDiv.innerHTML = 'Failed to stop scan';
+                }
+            );
+        })
+
     },
 
     // Update DOM on a Received Event
