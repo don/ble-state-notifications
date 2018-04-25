@@ -28,6 +28,13 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+
+        ble.startStateNotifications(
+            function(state) {
+                console.log("Bluetooth is " + state);
+                bluetoothStateSpan.innerHTML = state;
+            }
+        );
     },
 
     // Update DOM on a Received Event
